@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+import { AddUser } from "./components/Users/AddUser";
+import { UsersList } from "./components/Users/UsersList";
+
+type UserData = {
+  username: string;
+  age: string;
+  id: string;
+};
 
 function App() {
+  const [usersList, setUsersList] = useState<UserData[]>([]);
+
+  const isUsersListEmpty = Object.values(usersList).some(
+    (userData) => userData.username.length > 0 && userData.age.length > 0
+  );
+
+  const addUserHandler = (username: string, age: string) => {
+    setUsersList((prevUsersList) => {
+      return [
+        ...prevUsersList,
+        { username: username, age: age, id: Math.random().toString() },
+      ];
+    });
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AddUser onAddUser={addUserHandler} />
+      {!isUsersListEmpty && (
+        <p style={{ textAlign: "center", color: "white" }}>No users record</p>
+      )}
+      {isUsersListEmpty && <UsersList users={usersList} />}
     </div>
   );
 }
